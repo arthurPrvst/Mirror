@@ -15,9 +15,10 @@ MAC_OS = True
 
 if MAC_OS:
     #Recover network informations needed to execute the MiTM demonstration
-    os.system('sudo sysctl -w net.inet.ip.forwarding=1')
-    print('IP forwarding update to 1')
 
+    util.modify_ip_forwarding(activate=True)
+
+    print('----- '+str('Network Info')+' -----')
     ifconfig_process = subprocess.Popen(['ifconfig'], stdout=subprocess.PIPE)
     grep_process = subprocess.run(['grep', 'inet 192.168.'], stdin=ifconfig_process.stdout, stdout=subprocess.PIPE)
     our_ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', str(grep_process.stdout))[0]
@@ -37,10 +38,21 @@ if MAC_OS:
     route_ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', str(grep_process.stdout))[0]
     print('Route IP : '+str(route_ip))
 
+    print('----- '+str('Scanning Network')+' -----')
+    route_ip_ends_0 = ''.join([route_ip[:-2], '.'])
+    route_ip_ends_0 = route_ip_ends_0 + str(0) + str('/') + str(mask_length)
+    os.system('sudo nmap -sP '+str(route_ip_ends_0))
+    print('---------------------')
+
+
 elif LINUX:
     os.system("sudo echo 1 > '/proc/sys/net/ipv4/ip_forward'")
     print('IP forwarding update to 1')
 
 else:
     raise ValueError('WINDOWS OS not supported.')
+
+#Launch ARP Poisoning
+util.arp_mitm_attack()
+
 
