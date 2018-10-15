@@ -12,7 +12,7 @@ import utils as util
 def launch_scanning_network(MAC_OS=True):
     LINUX = False
     MAC_OS = True
-
+    result = []
     if MAC_OS:
         #Recover network informations needed to execute the MiTM demonstration
 
@@ -22,6 +22,7 @@ def launch_scanning_network(MAC_OS=True):
         ifconfig_process = subprocess.Popen(['ifconfig'], stdout=subprocess.PIPE)
         grep_process = subprocess.run(['grep', 'inet 192.168.'], stdin=ifconfig_process.stdout, stdout=subprocess.PIPE)
         our_ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', str(grep_process.stdout))[0]
+        result.append('Your local ip address : '+str(our_ip))
         print('Your local ip address : '+str(our_ip))
 
         netmask = re.findall(r'([0-9a-fA-Fx]{10})', str(grep_process.stdout))
@@ -36,12 +37,15 @@ def launch_scanning_network(MAC_OS=True):
         netstat_process = subprocess.Popen(['netstat -nr'], shell=True, stdout=subprocess.PIPE)
         grep_process = subprocess.run(['grep', 'default'], stdin=netstat_process.stdout, stdout=subprocess.PIPE)
         route_ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', str(grep_process.stdout))[0]
+        result.append('Route IP : '+str(route_ip))
         print('Route IP : '+str(route_ip))
 
         print('----- '+str('Scanning Network')+' -----')
         route_ip_ends_0 = ''.join([route_ip[:-2], '.'])
         route_ip_ends_0 = route_ip_ends_0 + str(0) + str('/') + str(mask_length)
-        os.system('sudo nmap -sP '+str(route_ip_ends_0))
+        res = os.popen('sudo nmap -sP '+str(route_ip_ends_0)).read()
+        result.append('\n')
+        result.append(res)
         print('---------------------')
         #nmap scan report ; Host is up ; MAC adress
         #ip.src == 192.168.0.16 and (udp.port == 53 || tcp.port == 53)
@@ -52,10 +56,15 @@ def launch_scanning_network(MAC_OS=True):
 
     else:
         raise ValueError('WINDOWS OS not supported.')
-    return "ok"
-    
+    return result
+
 def launch_attack():
     #Launch ARP Poisoning
     util.arp_mitm_attack()
+    
+def end_attack():
+    #stop launching packet TODO
+    util.modify_ip_forwarding(activate=False)
+
 
 

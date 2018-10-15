@@ -31,7 +31,9 @@ class Form(QObject):
  
     def scan_handler(self):
         output = launch_scanning_network()
-        self.output_zone.setText(output)
+
+        for i in range(len(output)):
+            self.output_zone.append(output[i])
 
     def attack_handler(self):
         target_IP = 'None' if not self.targetIP.text() else self.line.text()
