@@ -23,7 +23,7 @@ background-image:url(&quot;./ressources/background_1280_720.png&quot;)
 }</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="scanNetwork">
     <property name="geometry">
      <rect>
       <x>550</x>
@@ -39,7 +39,7 @@ background-image:url(&quot;./ressources/background_1280_720.png&quot;)
      <string>Scan Network</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="targetIP">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -71,7 +71,7 @@ background-image:url(&quot;./ressources/background_1280_720.png&quot;)
      <string>Console output</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="launchArpAttack">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -84,10 +84,10 @@ background-image:url(&quot;./ressources/background_1280_720.png&quot;)
      <bool>false</bool>
     </property>
     <property name="text">
-     <string>Launch MiTM attack</string>
+     <string>Launch ARP attack</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QLineEdit" name="targetMAC">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -100,7 +100,7 @@ background-image:url(&quot;./ressources/background_1280_720.png&quot;)
      <string>Target MAC</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_3">
+   <widget class="QLineEdit" name="routerIP">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -130,6 +130,16 @@ background-image:url(&quot;./ressources/background_1280_720.png&quot;)
     </property>
     <property name="text">
      <string>Logs</string>
+    </property>
+   </widget>
+   <widget class="QTextBrowser" name="outputZone">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>170</y>
+      <width>256</width>
+      <height>361</height>
+     </rect>
     </property>
    </widget>
   </widget>
