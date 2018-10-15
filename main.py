@@ -26,7 +26,8 @@ class Form(QObject):
         self.routerIP = self.window.findChild(QLineEdit, 'routerIP')
         self.btn_launch_attack = self.window.findChild(QPushButton, 'launchArpAttack')
         self.btn_launch_attack.clicked.connect(self.attack_handler)
-
+        self.btn_stop_attack = self.window.findChild(QPushButton, 'stopArpAttack')
+        self.btn_stop_attack.clicked.connect(self.stop_attack_handler)
         self.window.show()
  
     def scan_handler(self):
@@ -36,8 +37,17 @@ class Form(QObject):
             self.output_zone.append(output[i])
 
     def attack_handler(self):
-        target_IP = 'None' if not self.targetIP.text() else self.line.text()
-        print('Favorite language: {}'.format(target_IP))
+        target_IP = 'None' if not self.targetIP.text() else self.targetIP.text()
+        target_MAC = 'None' if not self.targetMAC.text() else self.targetMAC.text()
+        router_IP = 'None' if not self.routerIP.text() else self.routerIP.text()
+
+        if target_IP != 'None' and target_MAC != 'None' and router_IP != 'None':
+            arp_mitm_attack(target_IP, target_MAC, router_IP)
+        else:
+            print('You need to fill parameters needed for the ARP Poisonning...')
+    
+    def stop_attack_handler(self):
+        stop_attack()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
