@@ -1,58 +1,33 @@
-import numpy as np
-import os 
-import subprocess
-import re 
-import utils as util
+import sys
+ 
+from PySide2.QtUiTools import QUiLoader
+from PySide2.QtWidgets import QApplication, QPushButton, QLineEdit, QWidget
+from PySide2.QtCore import QFile, QObject
+ 
+class Form(QObject):
+ 
+    def __init__(self, ui_file, parent=None):
+        super(Form, self).__init__(parent)
+        ui_file = QFile(ui_file)
+        ui_file.open(QFile.ReadOnly)
+ 
+        loader = QUiLoader()
+        self.window = loader.load(ui_file)
+        ui_file.close()
 
-###
-### Python > 3.5
-###
-
-
-
-LINUX = False
-MAC_OS = True
-
-if MAC_OS:
-    #Recover network informations needed to execute the MiTM demonstration
-
-    util.modify_ip_forwarding(activate=True)
-
-    print('----- '+str('Network Info')+' -----')
-    ifconfig_process = subprocess.Popen(['ifconfig'], stdout=subprocess.PIPE)
-    grep_process = subprocess.run(['grep', 'inet 192.168.'], stdin=ifconfig_process.stdout, stdout=subprocess.PIPE)
-    our_ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', str(grep_process.stdout))[0]
-    print('Your local ip address : '+str(our_ip))
-
-    netmask = re.findall(r'([0-9a-fA-Fx]{10})', str(grep_process.stdout))
-    netmask = ''.join(netmask)
-    netmask = netmask[2:]
-    binary_mask = util.hex2bin(netmask)
-    print('Subnetwork mask : '+str(binary_mask))
-    
-    mask_length = str(binary_mask).count('1')
-    print('Subnetwork mask binary length: '+str(mask_length))
-
-    netstat_process = subprocess.Popen(['netstat -nr'], shell=True, stdout=subprocess.PIPE)
-    grep_process = subprocess.run(['grep', 'default'], stdin=netstat_process.stdout, stdout=subprocess.PIPE)
-    route_ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', str(grep_process.stdout))[0]
-    print('Route IP : '+str(route_ip))
-
-    print('----- '+str('Scanning Network')+' -----')
-    route_ip_ends_0 = ''.join([route_ip[:-2], '.'])
-    route_ip_ends_0 = route_ip_ends_0 + str(0) + str('/') + str(mask_length)
-    os.system('sudo nmap -sP '+str(route_ip_ends_0))
-    print('---------------------')
-
-
-elif LINUX:
-    os.system("sudo echo 1 > '/proc/sys/net/ipv4/ip_forward'")
-    print('IP forwarding update to 1')
-
-else:
-    raise ValueError('WINDOWS OS not supported.')
-
-#Launch ARP Poisoning
-util.arp_mitm_attack()
-
-
+        self.centralWidget = self.window.findChild(QWidget, 'centralWidget')
+        self.centralWidget.setStyleSheet("background-image: ./background.png; background-attachment: fixed")
+        self.line = self.window.findChild(QLineEdit, 'lineEdit')
+ 
+        btn = self.window.findChild(QPushButton, 'pushButton')
+        btn.clicked.connect(self.ok_handler)
+        self.window.show()
+ 
+    def ok_handler(self):
+        language = 'None' if not self.line.text() else self.line.text()
+        print('Favorite language: {}'.format(language))
+ 
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    form = Form('GUI.ui')
+    sys.exit(app.exec_())
