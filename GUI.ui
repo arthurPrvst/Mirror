@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1280</width>
+    <height>720</height>
+   </rect>
+  </property>
   <property name="minimumSize">
    <size>
     <width>1280</width>
@@ -156,6 +164,16 @@ background-image:url(&quot;./ressources/background_1280_720.png&quot;)
     </property>
     <property name="text">
      <string>Stop ARP attack</string>
+    </property>
+   </widget>
+   <widget class="QTextBrowser" name="outputSniffing">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>170</y>
+      <width>891</width>
+      <height>471</height>
+     </rect>
     </property>
    </widget>
   </widget>

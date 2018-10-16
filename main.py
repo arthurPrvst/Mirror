@@ -3,10 +3,13 @@ import time
 import os
 
 from attack import *
+from myThread import *
+from threading import Thread
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtWidgets import QApplication, QPushButton, QLineEdit, QWidget, QTextBrowser
 from PySide2.QtCore import QFile, QObject
- 
+
+
 class Form(QObject):
  
     def __init__(self, ui_file, parent=None):
@@ -23,6 +26,7 @@ class Form(QObject):
         self.btn_scan_ntw = self.window.findChild(QPushButton, 'scanNetwork')
         self.btn_scan_ntw.clicked.connect(self.scan_handler)
         self.output_zone = self.window.findChild(QTextBrowser, 'outputZone')
+        self.output_sniffing = self.window.findChild(QTextBrowser, 'outputSniffing')
         self.targetIP = self.window.findChild(QLineEdit, 'targetIP')
         self.targetMAC = self.window.findChild(QLineEdit, 'targetMAC')
         self.routerIP = self.window.findChild(QLineEdit, 'routerIP')
@@ -31,6 +35,7 @@ class Form(QObject):
         self.btn_stop_attack = self.window.findChild(QPushButton, 'stopArpAttack')
         self.btn_stop_attack.clicked.connect(self.stop_attack_handler)
         self.pid_tshark = None
+        self.reading_thread = None
         self.window.show()
  
     def scan_handler(self):
@@ -40,6 +45,7 @@ class Form(QObject):
             self.output_zone.append(output[i])
 
     def attack_handler(self):
+        global READING_THREAD
         target_IP = 'None' if not self.targetIP.text() else self.targetIP.text()
         target_MAC = 'None' if not self.targetMAC.text() else self.targetMAC.text()
         router_IP = 'None' if not self.routerIP.text() else self.routerIP.text()
@@ -50,11 +56,15 @@ class Form(QObject):
             print('You need to fill parameters needed for the ARP Poisonning...')
             
         #Log all sniffed DNS queries
-        cmd = 'tshark -f "src ' + str(target_IP) + ' and port 53 and not icmp" -w ./Sniffing_Logs/'+ str(int(time.time())) + '.pcap'
-        sniffing_process = subprocess.Popen([cmd], shell=True, preexec_fn=os.setsid) 
+        cmd = 'tshark -l -f "src ' + str(target_IP) + ' and port 53 and not icmp" '#-w ./Sniffing_Logs/'+ str(int(time.time())) + '.pcap'
+        sniffing_process = subprocess.Popen([cmd], stdout=subprocess.PIPE, shell=True, stderr=subprocess.STDOUT, preexec_fn=os.setsid)
         self.pid_tshark = sniffing_process.pid
+        self.reading_thread = ReaderThread(sniffing_process, self.output_sniffing)
+        self.reading_thread.start()
+
 
     def stop_attack_handler(self):
+        self.reading_thread.stop()
         os.killpg(os.getpgid(self.pid_tshark), signal.SIGTERM)
         stop_attack()
 

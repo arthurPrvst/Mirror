@@ -24,7 +24,7 @@ class FloodingThread(Thread):
 
     def run(self):
         while self.running:
-            send(self.arp)
+            send(self.arp, verbose=0)
             time.sleep(1)
 
     def stop(self):
@@ -112,6 +112,5 @@ def arp_mitm_attack_without_input():
 
 def stop_attack():
     global FLOODING_THREAD
-
     FLOODING_THREAD.stop() #stop arp flooding
     util.modify_ip_forwarding(activate=False)
