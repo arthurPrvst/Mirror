@@ -1,5 +1,6 @@
 import numpy as np
 import os 
+import signal
 import subprocess
 import re 
 import utils as util
@@ -111,6 +112,6 @@ def arp_mitm_attack_without_input():
 
 def stop_attack():
     global FLOODING_THREAD
-    
+
     FLOODING_THREAD.stop() #stop arp flooding
     util.modify_ip_forwarding(activate=False)

