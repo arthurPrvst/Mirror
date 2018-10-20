@@ -1,5 +1,6 @@
 # Mirror
 ARP Poisoning Viewer for local attacks. This tool should be used for educational purpose only. Indeed, even if TLS gives us confidentiality integrity and authentication, it doesn't provide anonimity. One of the possible ways to recover  websites visited by the user (victim) is to do a Man In The Middle (MiTM) attack (with ARP poisonning for example) and then to recover DNS packets.[See how an ARP poisonning attack works](https://www.quora.com/How-does-an-arp-attack-work). 
+**OS SUPPORTED : MAC OS**. Linux and Windows OS will be handled soon.
 
 ## How to use it
 
@@ -26,6 +27,10 @@ You have to launch the script as follow :```sudo python main.py```.
 
 * UI is created with PyQt.
 
+## User Interface 
+
+* ![alt text](./ressources/mirror_user_interface.png "Mirror tool user interface")
+
 ## Further informations
 
 * Scan local network : ```nmap -sP ...```
@@ -36,7 +41,10 @@ You have to launch the script as follow :```sudo python main.py```.
 
 This project is licensed under the MIT License.
 
+## TODO
+
+Handle LINUX and Windows OS.
 
 ## Disclaimer
 
-This tool should be used for educational purpose only, in order to prevention. I am not responsible for any evil use of it.
+This tool should be used for educational purpose only, in order to do prevention. I am not responsible for any evil use of it.
