@@ -3,11 +3,12 @@ import time
 import os
 
 from attack import *
-from myThread import *
+from readerThread import *
 from threading import Thread
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtWidgets import QApplication, QPushButton, QLineEdit, QWidget, QTextBrowser
 from PySide2.QtCore import QFile, QObject
+from PySide2.QtGui import QIcon
 
 
 class Form(QObject):
@@ -36,6 +37,9 @@ class Form(QObject):
         self.btn_stop_attack.clicked.connect(self.stop_attack_handler)
         self.pid_tshark = None
         self.reading_thread = None
+
+        self.list_favicon = []
+        self.html_favicon = ''
         self.window.show()
  
     def scan_handler(self):
@@ -70,5 +74,7 @@ class Form(QObject):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    path = os.path.join(os.path.dirname(sys.modules[__name__].__file__), './ressources/icon.png')
+    app.setWindowIcon(QIcon(path))
     form = Form('GUI.ui')
     sys.exit(app.exec_())
